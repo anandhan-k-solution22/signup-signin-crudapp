@@ -14,8 +14,7 @@ export default function SignUpPage() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
-  const [blockRedirect, setBlockRedirect] = useState(false); // 🚀 new state
-
+  const [blockRedirect, setBlockRedirect] = useState(false);
 
   useEffect(() => {
     if (user && !blockRedirect) {
@@ -23,7 +22,7 @@ export default function SignUpPage() {
     }
   }, [user, blockRedirect, router]);
 
-  const onSubmit = async (e: React.FormEvent) => {
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     setErrorMsg("");
@@ -38,10 +37,9 @@ export default function SignUpPage() {
         });
 
       if (loginData.user) {
-        // ✅ User exists, show error instead of redirecting
         setErrorMsg("User already exists. Please sign in instead.");
-        setBlockRedirect(true); // stop the redirect
-        await supabase.auth.signOut(); // also sign them out immediately
+        setBlockRedirect(true);
+        await supabase.auth.signOut();
         setLoading(false);
         return;
       }
@@ -59,8 +57,13 @@ export default function SignUpPage() {
       if (signUpError) throw signUpError;
 
       alert("Check your email to confirm (if confirmation is enabled).");
-    } catch (err: any) {
-      setErrorMsg(err.message);
+    } catch (err) {
+      // ✅ Type-safe error handling
+      if (err instanceof Error) {
+        setErrorMsg(err.message);
+      } else {
+        setErrorMsg("Something went wrong. Please try again.");
+      }
     } finally {
       setLoading(false);
     }
@@ -75,7 +78,9 @@ export default function SignUpPage() {
           type="email"
           placeholder="you@example.com"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setEmail(e.target.value)
+          }
           required
         />
         <input
@@ -83,7 +88,9 @@ export default function SignUpPage() {
           type="password"
           placeholder="••••••••"
           value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setPassword(e.target.value)
+          }
           required
         />
         <button

@@ -18,15 +18,20 @@ export default function SignInPage() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const onSubmit = async (e: React.FormEvent) => {
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     try {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) throw error;
       router.push("/crud");
-    } catch (err: any) {
-      alert(err.message); // e.g. Invalid login credentials
+    } catch (err) {
+      // ✅ no `any` here
+      if (err instanceof Error) {
+        alert(err.message); // shows e.g. "Invalid login credentials"
+      } else {
+        alert("Something went wrong. Please try again.");
+      }
     } finally {
       setLoading(false);
     }
@@ -41,7 +46,7 @@ export default function SignInPage() {
           type="email"
           placeholder="you@example.com"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
           required
         />
         <input
@@ -49,7 +54,7 @@ export default function SignInPage() {
           type="password"
           placeholder="••••••••"
           value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
           required
         />
         <button className="w-full bg-black text-white rounded p-2" disabled={loading}>

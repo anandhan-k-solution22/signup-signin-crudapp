@@ -88,7 +88,7 @@ export default function CrudPage() {
       <div className="p-6">
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
-          <h1 className="text-xl font-bold">Users CRUD App</h1>
+          <h1 className="text-xl font-bold">CRUD App</h1>
           <SignOutButton />
         </div>
 
